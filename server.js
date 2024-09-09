@@ -3,6 +3,9 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 
+require("dotenv").config();
+console.log(process.env);
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -13,9 +16,9 @@ app.use(bodyParser.json()); // Parse incoming requests with JSON payloads
 // PostgreSQL connection
 const pool = new Pool({
   user: "practice_app_user",
-  host: "dpg-crev2fogph6c73f01u3g-a.virginia-postgres.render.com",
+  host: process.env.POSTGRES_HOST,
   database: "practice_app",
-  password: "BicogevvCVwGV3t9dhBTLZ8IUr6PMNWA",
+  password: process.env.POSTGRES_PASS,
   port: 5432,
   ssl: true,
 });
