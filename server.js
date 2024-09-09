@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 
 require("dotenv").config();
-console.log(process.env);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,7 +23,7 @@ const pool = new Pool({
 });
 
 // Example API route to get data from PostgreSQL
-app.get("http://localhost:5000/api/data", async (req, res) => {
+app.get("/api/data", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM tasks");
     res.status(200).json(result.rows);
