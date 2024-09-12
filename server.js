@@ -34,6 +34,21 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
+app.post("/api/add", async (req, res) => {
+  const { searchParams } = new URL(request.url);
+  const title = searchParams.get("title");
+  const text = searchParams.get("text");
+
+  try {
+    pool.query(`INSERT INTO tasks(title, text) VALUES (${title}, ${text})`);
+    const result = await pool.query("SELECT * FROM tasks");
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
