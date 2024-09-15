@@ -34,10 +34,9 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
-app.post("/api/add", async (req, res) => {
-  const { searchParams } = new URL(request.url);
-  const title = searchParams.get("title");
-  const text = searchParams.get("text");
+app.get("/api/add", async (req, res) => {
+  const title = req.query.title;
+  const text = req.query.text;
 
   try {
     pool.query(`INSERT INTO tasks(title, text) VALUES (${title}, ${text})`);
