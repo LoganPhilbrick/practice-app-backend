@@ -43,7 +43,7 @@ app.get("/api/add", async (req, res) => {
   const taskid = uuidv4();
 
   try {
-    await pool.query("INSERT INTO tasks(title, text, userid) VALUES ($1, $2, $3, $4)", [title, text, userid, taskid]);
+    await pool.query("INSERT INTO tasks(title, text, userid, taskid) VALUES ($1, $2, $3, $4)", [title, text, userid, taskid]);
     const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
     res.status(200).json(result.rows);
   } catch (error) {
