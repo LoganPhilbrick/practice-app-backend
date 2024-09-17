@@ -41,6 +41,7 @@ app.get("/api/add", async (req, res) => {
   const text = req.query.text;
   const userid = req.query.userid;
   const taskid = uuidv4();
+  console.log(taskid);
 
   try {
     await pool.query("INSERT INTO tasks(title, text, userid, taskid) VALUES ($1, $2, $3, $4)", [title, text, userid, taskid]);
