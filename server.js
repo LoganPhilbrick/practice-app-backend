@@ -26,7 +26,16 @@ const pool = new Pool({
 // Example API route to get data from PostgreSQL
 app.get("/api/data", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM tasks");
+    if (!userid) {
+      return res.status(400).send("User ID is required");
+    }
+
+    const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No tasks found for this user" });
+    }
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);
