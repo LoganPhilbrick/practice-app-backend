@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors()); // Enable CORS to allow React app to make requests
 app.use(bodyParser.json()); // Parse incoming requests with JSON payloads
-// app.use("Access-Control-Allow-Origin", "https://practice-app-backend.onrender.com");
+app.use("Access-Control-Allow-Origin", "https://practice-app-backend.onrender.com");
 
 // PostgreSQL connection
 const pool = new Pool({
