@@ -37,9 +37,10 @@ app.get("/api/data", async (req, res) => {
 app.get("/api/add", async (req, res) => {
   const title = req.query.title;
   const text = req.query.text;
+  const userid = req.query.userid;
 
   try {
-    pool.query(`INSERT INTO tasks(title, text) VALUES (${title}, ${text})`);
+    pool.query(`INSERT INTO tasks(title, text, userid) VALUES (${title}, ${text}, ${userid})`);
     const result = await pool.query("SELECT * FROM tasks");
     res.status(200).json(result.rows);
   } catch (error) {
