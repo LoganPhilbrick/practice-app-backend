@@ -18,7 +18,7 @@ app.use(bodyParser.json()); // Parse incoming requests with JSON payloads
 const pool = new Pool({
   user: "practice_app_user",
   host: process.env.POSTGRES_HOST,
-  database: "practice_app",
+  database: "practice_app_4c8f",
   password: process.env.POSTGRES_PASS,
   port: 5432,
   ssl: true,
