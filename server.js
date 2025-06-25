@@ -24,7 +24,7 @@ const pool = new Pool({
   ssl: true,
 });
 
-// Example API route to get data from PostgreSQL
+// Retrieve all tasks for a user
 app.get("/api/data", async (req, res) => {
   const { userid } = req.query;
   try {
@@ -36,6 +36,7 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
+// Add a new task
 app.get("/api/add", async (req, res) => {
   const title = req.query.title;
   const text = req.query.text;
@@ -44,6 +45,24 @@ app.get("/api/add", async (req, res) => {
 
   try {
     await pool.query("INSERT INTO tasks(title, text, userid, taskid) VALUES ($1, $2, $3, $4)", [title, text, userid, taskid]);
+    const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+// DELETE a task by taskid
+app.delete("/api/delete", async (req, res) => {
+  const { taskid, userid } = req.query;
+
+  if (!taskid || !userid) {
+    return res.status(400).send("Missing taskid or userid");
+  }
+
+  try {
+    await pool.query("DELETE FROM tasks WHERE taskid = $1 AND userid = $2", [taskid, userid]);
     const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
     res.status(200).json(result.rows);
   } catch (error) {
