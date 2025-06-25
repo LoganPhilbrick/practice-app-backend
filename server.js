@@ -3,16 +3,14 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const { v4: uuidv4 } = require("uuid");
-
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors()); // Enable CORS to allow React app to make requests
-app.use(bodyParser.json()); // Parse incoming requests with JSON payloads
-// app.use("Access-Control-Allow-Origin", "https://practice-app-backend.onrender.com");
+app.use(cors());
+app.use(bodyParser.json());
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -24,31 +22,33 @@ const pool = new Pool({
   ssl: true,
 });
 
-// Retrieve all tasks for a user
+// GET all tasks for a user
 app.get("/api/data", async (req, res) => {
   const { userid } = req.query;
+  if (!userid) return res.status(400).send("Missing userid");
+
   try {
-    const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error(error);
+    const { rows } = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching tasks:", err);
     res.status(500).send("Server error");
   }
 });
 
-// Add a new task
+// ADD a new task
 app.get("/api/add", async (req, res) => {
-  const title = req.query.title;
-  const text = req.query.text;
-  const userid = req.query.userid;
+  const { title, text, userid } = req.query;
+  if (!title || !text || !userid) return res.status(400).send("Missing required fields");
+
   const taskid = uuidv4();
 
   try {
     await pool.query("INSERT INTO tasks(title, text, userid, taskid) VALUES ($1, $2, $3, $4)", [title, text, userid, taskid]);
-    const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error(error);
+    const { rows } = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error adding task:", err);
     res.status(500).send("Server error");
   }
 });
@@ -56,17 +56,14 @@ app.get("/api/add", async (req, res) => {
 // DELETE a task by taskid
 app.delete("/api/delete", async (req, res) => {
   const { taskid, userid } = req.query;
-
-  if (!taskid || !userid) {
-    return res.status(400).send("Missing taskid or userid");
-  }
+  if (!taskid || !userid) return res.status(400).send("Missing taskid or userid");
 
   try {
     await pool.query("DELETE FROM tasks WHERE taskid = $1 AND userid = $2", [taskid, userid]);
-    const result = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error(error);
+    const { rows } = await pool.query("SELECT * FROM tasks WHERE userid = $1", [userid]);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error deleting task:", err);
     res.status(500).send("Server error");
   }
 });
